@@ -71,3 +71,17 @@ void init(double* a, int size, double elem) {
 void init(double* a, int size) {
 	init(a, size, 0.0);
 }
+
+void input(double* a, double* y, int n) {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			std::cout << "a[" << i << "][" << j << "]= ";
+			std::cin >> a[i * n + j];
+		}
+	}
+
+	for (int i = 0; i < n; i++) {
+		std::cout << "y[" << i << "]= ";
+		std::cin >> y[i];
+	}
+}
