@@ -15,7 +15,7 @@ void gaussDef(double* a, double* y, double* x, int n) {
 			mu = a[k * n + i] / a[i * n + i];
 
 			for (int j = i; j <= n - 1; j++) {
-				a[k * n +	j] = a[k * n + j] - mu * a[i * n + j];
+				a[k * n + j] = a[k * n + j] - mu * a[i * n + j];
 				
 			}
 

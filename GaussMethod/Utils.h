@@ -27,18 +27,27 @@ void copy(double* from, double* to, int size) {
 	}
 }
 
+// Prints linear equation system to console
 void print(double* a, double* y, int n) {
 	std::cout << std::endl;
 	char sep = ' ';
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
-			//std::cout << a[i * n + j] << "*x" << j;
 			std::cout << a[i * n + j];
 			if (j < n - 1)
 				std::cout << sep;
 		}
 		std::cout << " = " << y[i] << std::endl;
 	}
+}
+
+// Prints content of array to console
+void print(double* a, int size) {
+	char sep = ' ';
+	for (int i = 0; i < size; i++) {
+		std::cout << a[i] << sep;
+	}
+	std::cout << std::endl;
 }
 
 // TO-DO: make check "determinant == 0 ?"
