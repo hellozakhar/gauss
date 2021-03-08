@@ -52,7 +52,7 @@ void print(double* a, int size) {
 
 // TO-DO: make check "determinant == 0 ?"
 // TO-DO: change the method of generating numbers
-void generateLinearSystem(double* a, double* y, int n) {
+void generateSystemOfLinearEquations(double* a, double* y, int n) {
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			a[i * n + j] = rand() % 9999;
