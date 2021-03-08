@@ -96,17 +96,7 @@ void testGaussDef(bool isAuto) {
 		generateLinearSystem(a, y, n);
 	}
 	else {
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				std::cout << "a[" << i << "][" << j << "]= ";
-				std::cin >> a[i * n + j];
-			}
-		}
-
-		for (int i = 0; i < n; i++) {
-			std::cout << "y[" << i << "]= ";
-			std::cin >> y[i];
-		}
+		input(a, y, n);
 	}
 
 	//print(a, y, n);
@@ -135,17 +125,7 @@ void testGaussMax(bool isAuto) {
 		generateLinearSystem(a, y, n);
 	}
 	else {
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				std::cout << "a[" << i << "][" << j << "]= ";
-				std::cin >> a[i * n + j];
-			}
-		}
-
-		for (int i = 0; i < n; i++) {
-			std::cout << "y[" << i << "]= ";
-			std::cin >> y[i];
-		}
+		input(a, y, n);
 	}
 
 	gaussMax(a, y, x, n);
