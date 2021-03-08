@@ -93,7 +93,7 @@ void testGaussDef(bool isAuto) {
 	init(x, n);
 
 	if (isAuto) {
-		generateLinearSystem(a, y, n);
+		generateSystemOfLinearEquations(a, y, n);
 	}
 	else {
 		input(a, y, n);
@@ -122,7 +122,7 @@ void testGaussMax(bool isAuto) {
 	init(x, n);
 
 	if (isAuto) {
-		generateLinearSystem(a, y, n);
+		generateSystemOfLinearEquations(a, y, n);
 	}
 	else {
 		input(a, y, n);
