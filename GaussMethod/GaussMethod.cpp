@@ -7,18 +7,7 @@
 const double EPS = 1e-5;
 
 void gaussDef(double* a, double* y, double* x, int n) {
-
-	/*  Прямой ход метода Гаусса.
-		На итерации i, 1 <= i <= n, метода производится исключение
-		неизвестной i для всех уравнений с номерами k, i < k <= n.
-		Для этого из этих уравнений осуществляется вычитание строки i,
-		умноженной на константу(aki / aii), чтобы результирующий
-		коэффициент при неизвестной xi в строках оказался
-		нулевым.
-		*/
-
-	// Множитель Гаусса
-	double mu;
+	double mu = 0.0;
 	
 	for (int i = 0; i < n - 1; i++) {
 		for (int k = i + 1; k <= n - 1; k++) {
@@ -26,22 +15,13 @@ void gaussDef(double* a, double* y, double* x, int n) {
 			mu = a[k * n + i] / a[i * n + i];
 
 			for (int j = i; j <= n - 1; j++) {
-				a[k * n +	j] = a[k * n + j] - mu * a[i * n + j];
+				a[k * n + j] = a[k * n + j] - mu * a[i * n + j];
 				
 			}
 
 			y[k] = y[k] - mu * y[i];
 		}
 	}
-
-	/*  Обратный ход метода Гаусса.
-		После приведения матрицы коэффициентов к треугольному
-		виду становится возможным определение значений неизвестных :
-		- Из последнего уравнения преобразованной системы может
-		быть вычислено значение переменной xn,
-		- Из предпоследнего уравнения становится возможным
-		определение переменной xn - 1, и т.д.
-		*/
 
 	for (int i = n - 1; i >= 0; i--) {
 		x[i] = y[i];
@@ -55,23 +35,14 @@ void gaussDef(double* a, double* y, double* x, int n) {
 }
 
 void gaussMax(double* a, double* y, double* x, int n) {
-	double max;
-	double mu; // Множитель Гаусса
-	int index;
+	double max = 0.0;
+	double mu = 0.0;
+	int index = 0;
 	int* row = new int[n];
 
 	for (int i = 0; i < n; i++) {
 		row[i] = i;
 	}
-
-	/*  Прямой ход метода Гаусса.
-		На итерации i, 1 <= i <= n, метода производится исключение
-		неизвестной i для всех уравнений с номерами k, i < k <= n.
-		Для этого из этих уравнений осуществляется вычитание строки i,
-		умноженной на константу(aki / aii), чтобы результирующий
-		коэффициент при неизвестной xi в строках оказался
-		нулевым.
-		*/
 
 	for (int i = 0; i < n - 1; i++) {
 
@@ -100,15 +71,6 @@ void gaussMax(double* a, double* y, double* x, int n) {
 		}
 	}
 
-	/*  Обратный ход метода Гаусса.
-		После приведения матрицы коэффициентов к треугольному
-		виду становится возможным определение значений неизвестных :
-		- Из последнего уравнения преобразованной системы может
-		быть вычислено значение переменной xn,
-		- Из предпоследнего уравнения становится возможным
-		определение переменной xn - 1, и т.д.
-		*/
-
 	for (int i = n - 1; i >= 0; i--) {
 		x[i] = y[row[i]];
 
@@ -121,7 +83,7 @@ void gaussMax(double* a, double* y, double* x, int n) {
 }
 
 void testGaussDef(bool isAuto) {
-	int n;
+	int n = 0;
 	std::cout << "Enter count of equations: ";
 	std::cin >> n;
 
@@ -131,20 +93,10 @@ void testGaussDef(bool isAuto) {
 	init(x, n);
 
 	if (isAuto) {
-		generateLinearSystem(a, y, n);
+		generateSystemOfLinearEquations(a, y, n);
 	}
 	else {
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				std::cout << "a[" << i << "][" << j << "]= ";
-				std::cin >> a[i * n + j];
-			}
-		}
-
-		for (int i = 0; i < n; i++) {
-			std::cout << "y[" << i << "]= ";
-			std::cin >> y[i];
-		}
+		input(a, y, n);
 	}
 
 	//print(a, y, n);
@@ -170,20 +122,10 @@ void testGaussMax(bool isAuto) {
 	init(x, n);
 
 	if (isAuto) {
-		generateLinearSystem(a, y, n);
+		generateSystemOfLinearEquations(a, y, n);
 	}
 	else {
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				std::cout << "a[" << i << "][" << j << "]= ";
-				std::cin >> a[i * n + j];
-			}
-		}
-
-		for (int i = 0; i < n; i++) {
-			std::cout << "y[" << i << "]= ";
-			std::cin >> y[i];
-		}
+		input(a, y, n);
 	}
 
 	gaussMax(a, y, x, n);
