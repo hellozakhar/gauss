@@ -157,13 +157,18 @@ void testGaussDiscrepancy() {
 
 	generateSystemOfLinearEquations(aDef, yDef, n);
 
-	copy(aDef, aMax, n, n);
-	copy(yDef, yMax, n, n);
-	copy(aDef, aOrig, n, n);
-	copy(yDef, yOrig, n, n);
+	copy(aDef, aMax, n * n);
+	copy(yDef, yMax, n * n);
+	copy(aDef, aOrig, n * n);
+	copy(yDef, yOrig, n * n);
 
 	gaussDef(aDef, yDef, xDef, n);
 	gaussMax(aMax, yMax, xMax, n);
+
+	delete[] aDef;
+	delete[] yDef;
+	delete[] aMax;
+	delete[] yMax;
 
 	for (int i = 0; i < n; i++) {
 		std::cout << "(def) x[" << i << "]=" << xDef[i] << std::endl;
@@ -191,13 +196,7 @@ void testGaussDiscrepancy() {
 		std::cout << "(discrepancy def) delta[" << i << "]=" << discrepancyGaussDef[i] << std::endl;
 		std::cout << "(discrepancy max) delta[" << i << "]=" << discrepancyGaussMax[i] << std::endl;
 	}
-
-	delete[] aDef;
-	delete[] yDef;
 	delete[] xDef;
-
-	delete[] aMax;
-	delete[] yMax;
 	delete[] xMax;
 
 	delete[] aOrig;
