@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <iomanip>
 
 void swap(double& a, double& b) {
 	double tmp = a;
@@ -50,6 +51,49 @@ void print(double* a, int size) {
 	std::cout << std::endl;
 }
 
+/*
+ * Функция maxInMatrix возвращает наибольший элемент матрицы matrix размера size.
+ * см. проект MultMatrix.
+ */
+double maxInMatrix(double* matrix, int size) {
+	double max = matrix[0];
+	for (int i = 0; i < size*size; i++) {
+		if (max < matrix[i]) {
+			max = matrix[i];
+		}
+	}
+	return max;
+}
+
+/*
+ * Функция getCountsOfDigits возвращает количество цифр целого числа number.
+ * см. проект MultMatrix.
+ */
+int getCountsOfDigits(int number) {
+	int count = (number == 0) ? 1 : 0;
+	while (number != 0) {
+		count++;
+		number /= 10;
+	}
+	return count;
+}
+
+/*
+ * Функция printMatrix выводит матрицу matrix размера size в консоль.
+  * см. проект MultMatrix.
+ */
+void printMatrix(double* matrix, int size) {
+	int width_elem = (int)getCountsOfDigits(maxInMatrix(matrix, size)) + 1;
+	std::cout << '\n';
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			std::cout.width(width_elem);
+			std::cout << matrix[i*size + j] << " ";
+		}
+		std::cout << '\n';
+	}
+}
+
 // TO-DO: make check "determinant == 0 ?"
 // TO-DO: change the method of generating numbers
 void generateSystemOfLinearEquations(double* a, double* y, int n) {
@@ -59,6 +103,19 @@ void generateSystemOfLinearEquations(double* a, double* y, int n) {
 		}
 
 		y[i] = rand() % 9999;
+	}
+}
+
+/*
+* Функция generateRandomMatrix заполняет матрицу matrix
+* размера size случайно сгенерированными элементами типа double.
+* см. проект MultMatrix.
+*/
+void generateRandomMatrix(double* matrix, int size) {
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			matrix[i*size + j] = rand() % 9999;
+		}
 	}
 }
 
