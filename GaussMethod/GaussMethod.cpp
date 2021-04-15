@@ -383,7 +383,7 @@ void test_OLDLU_solve(int n) {
 	generateSystemOfLinearEquations(A, Y, n);
 	LU_Decomposition(A, L, U, n);
 	LU_Solve(L, U, Y, X, n);
-
+	std::cin >> n;
 	delete[] A;
 	delete[] Y;
 	delete[] L;
@@ -399,17 +399,131 @@ void test_LU_solve(int n) {
 	generateSystemOfLinearEquations(A, Y, n);
 	LU_Decomposition(A, n);
 	LU_Solve(A, Y, X, n);
-
+	std::cin >> n;
 	delete[] A;
 	delete[] Y;
 	delete[] X;
 }
 
+void test_OLDLU_solve(int n, int times, bool isForCopy) {
+	if (!isForCopy) {
+		std::cout << "\nLU-decomposition (2ARR) of matrix  " << n << " * " << n
+			<< "\nRun " << times << " times." << std::endl;
+	}
+
+	double* A = new double[n * n];
+	double* Y = new double[n];
+	double* X = new double[n];
+	double* time = new double[times];
+
+
+	for (int i = 0; i < times; i++) {
+		generateSystemOfLinearEquations(A, Y, n);
+		/*init(L, n*n);
+		init(U, n*n);
+		init(Y, n*n);
+		init(X, n*n);*/
+
+		Timer t1;
+		LU_Decomposition(A, n);
+		LU_Solve(A, Y, X, n);
+		time[i] = t1.elapsed();
+	}
+
+	double avg = 0.0;
+	double min = time[0];
+	double max = time[0];
+
+	for (int i = 0; i < times; i++) {
+		//std::cout << i << "\ttime taken: " << time.at(i) << '\n';
+		avg += time[i];
+		if (min > time[i]) min = time[i];
+		if (max < time[i]) max = time[i];
+	}
+	avg /= times;
+
+	if (!isForCopy) {
+		std::cout << "------TIME------"
+			<< "\nAVG: " << avg
+			<< "\nMIN: " << min
+			<< "\nMAX: " << max << std::endl;
+	}
+	else {
+		std::cout << avg << std::endl;
+	}
+	
+	delete[] A;
+	delete[] Y;
+	delete[] X;
+	delete[] time;
+}
+
+void test_LU_solve(int n, int times, bool isForCopy) {
+	if (!isForCopy) {
+		std::cout << "\nLU-decomposition (2ARR) of matrix  " << n << " * " << n
+			<< "\nRun " << times << " times." << std::endl;
+	}
+
+	double* A = new double[n * n];
+	double* Y = new double[n];
+	double* L = new double[n * n];
+	double* U = new double[n * n];
+	double* X = new double[n];
+	double* time = new double[times];
+
+	generateSystemOfLinearEquations(A, Y, n);
+
+	for (int i = 0; i < times; i++) {
+
+		/*init(L, n*n);
+		init(U, n*n);
+		init(Y, n*n);
+		init(X, n*n);*/
+
+		Timer t1;
+		LU_Decomposition(A, L, U, n);
+		LU_Solve(L, U, Y, X, n);
+		time[i] = t1.elapsed();
+	}
+
+	double avg = 0.0;
+	double min = time[0];
+	double max = time[0];
+
+	for (int i = 0; i < times; i++) {
+		//std::cout << i << "\ttime taken: " << time.at(i) << '\n';
+		avg += time[i];
+		if (min > time[i]) min = time[i];
+		if (max < time[i]) max = time[i];
+	}
+	avg /= times;
+
+	if (!isForCopy) {
+		std::cout << "------TIME------"
+			<< "\nAVG: " << avg
+			<< "\nMIN: " << min
+			<< "\nMAX: " << max << std::endl;
+	}
+	else {
+		std::cout << avg << std::endl;
+	}
+
+	delete[] A;
+	delete[] Y;
+	delete[] L;
+	delete[] U;
+	delete[] X;
+	delete[] time;
+}
+
 int main() {
 	// isAuto true  => coeffs and y - generated,
 	// isAuto false => coeffs and y - enter manually.
-	const bool isAuto = true;
-	const int n = 2500;
+	// const bool isAuto = true;
+
+	//const int n = 100;
+	const int times = 5;
+	const bool isForCopy = true;
 
 	//testGaussDef(isAuto);
 	//testGaussDiscrepancy();
@@ -419,6 +533,29 @@ int main() {
 	//test_OLDLU_solve(n);
 	//test_LU_solve(n);
 
+	/*test_OLDLU_solve(100, times, isForCopy);
+	test_OLDLU_solve(200, times, isForCopy);
+	test_OLDLU_solve(500, times, isForCopy);
+	test_OLDLU_solve(1000, times, isForCopy);
+	test_OLDLU_solve(1500, times, isForCopy);
+	test_OLDLU_solve(2000, times, isForCopy);
+	test_OLDLU_solve(3000, times, isForCopy);
+	test_OLDLU_solve(4000, times, isForCopy);
+	test_OLDLU_solve(5000, times, isForCopy);
+	test_OLDLU_solve(6000, times, isForCopy);
+	test_OLDLU_solve(7000, times, isForCopy);*/
+
+	/*test_LU_solve(100, times, isForCopy);
+	test_LU_solve(200, times, isForCopy);
+	test_LU_solve(500, times, isForCopy);
+	test_LU_solve(1000, times, isForCopy);
+	test_LU_solve(1500, times, isForCopy);
+	test_LU_solve(2000, times, isForCopy);
+	test_LU_solve(3000, times, isForCopy);
+	test_LU_solve(4000, times, isForCopy);
+	test_LU_solve(5000, times, isForCopy);
+	test_LU_solve(6000, times, isForCopy);
+	test_LU_solve(7000, times, isForCopy);*/
 
 	int zzz;
 	std::cin >> zzz;
