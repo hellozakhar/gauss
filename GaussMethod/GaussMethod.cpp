@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <omp.h>
 
 #include "Utils.h"
 #include "Timer.h"
@@ -158,6 +159,27 @@ void LU_Solve(double* LU, double* y, double* x, int n) {
 		}
 
 		x[i] /= LU[i * n + i];
+	}
+}
+
+void LU_Decomposition_par(double* A, int n) {
+	for (int i = 0; i < n; i++) {
+
+		#ifdef _OPENMP
+		#pragma omp parallel for
+		#endif
+		for (int k = i + 1; k < n; k++) {
+			double mu = A[k * n + i] / A[i * n + i];
+
+			#ifdef _OPENMP
+			#pragma omp parallel for
+			#endif
+			for (int j = i; j < n; j++) {
+				A[k * n + j] -= mu * A[i * n + j];
+			}
+
+			A[k * n + i] = mu;
+		}
 	}
 }
 
@@ -347,7 +369,7 @@ void testCompareSolutionGaussAndLU() {
 	gaussDef(A_GAUSS, Y_GAUSS, X_GAUSS, n);
 	gaussMax(A_GAUSS_MAX, Y_GAUSS_MAX, X_GAUSS_MAX, n);
 	LU_Decomposition(A_OLDLU, L_OLDLU, U_OLDLU, n);
-	LU_Decomposition(A_LU, n);
+	LU_Decomposition_par(A_LU, n);
 	LU_Solve(L_OLDLU, U_OLDLU, Y_OLDLU, X_OLDLU, n);
 	LU_Solve(A_LU, Y_LU, X_LU, n);
 
@@ -413,59 +435,6 @@ void test_OLDLU_solve(int n, int times, bool isForCopy) {
 
 	double* A = new double[n * n];
 	double* Y = new double[n];
-	double* X = new double[n];
-	double* time = new double[times];
-
-
-	for (int i = 0; i < times; i++) {
-		generateSystemOfLinearEquations(A, Y, n);
-		/*init(L, n*n);
-		init(U, n*n);
-		init(Y, n*n);
-		init(X, n*n);*/
-
-		Timer t1;
-		LU_Decomposition(A, n);
-		LU_Solve(A, Y, X, n);
-		time[i] = t1.elapsed();
-	}
-
-	double avg = 0.0;
-	double min = time[0];
-	double max = time[0];
-
-	for (int i = 0; i < times; i++) {
-		//std::cout << i << "\ttime taken: " << time.at(i) << '\n';
-		avg += time[i];
-		if (min > time[i]) min = time[i];
-		if (max < time[i]) max = time[i];
-	}
-	avg /= times;
-
-	if (!isForCopy) {
-		std::cout << "------TIME------"
-			<< "\nAVG: " << avg
-			<< "\nMIN: " << min
-			<< "\nMAX: " << max << std::endl;
-	}
-	else {
-		std::cout << avg << std::endl;
-	}
-	
-	delete[] A;
-	delete[] Y;
-	delete[] X;
-	delete[] time;
-}
-
-void test_LU_solve(int n, int times, bool isForCopy) {
-	if (!isForCopy) {
-		std::cout << "\nLU-decomposition (2ARR) of matrix  " << n << " * " << n
-			<< "\nRun " << times << " times." << std::endl;
-	}
-
-	double* A = new double[n * n];
-	double* Y = new double[n];
 	double* L = new double[n * n];
 	double* U = new double[n * n];
 	double* X = new double[n];
@@ -516,14 +485,123 @@ void test_LU_solve(int n, int times, bool isForCopy) {
 	delete[] time;
 }
 
+void test_LU_solve(int n, int times, bool isForCopy) {
+	if (!isForCopy) {
+		std::cout << "\nLU-decomposition (1ARR) of matrix  " << n << " * " << n
+			<< "\nRun " << times << " times." << std::endl;
+	}
+
+	double* A = new double[n * n];
+	double* Y = new double[n];
+	double* X = new double[n];
+	double* time = new double[times];
+
+
+	for (int i = 0; i < times; i++) {
+		generateSystemOfLinearEquations(A, Y, n);
+		/*init(L, n*n);
+		init(U, n*n);
+		init(Y, n*n);
+		init(X, n*n);*/
+
+		Timer t1;
+		LU_Decomposition(A, n);
+		LU_Solve(A, Y, X, n);
+		time[i] = t1.elapsed();
+	}
+
+	double avg = 0.0;
+	double min = time[0];
+	double max = time[0];
+
+	for (int i = 0; i < times; i++) {
+		//std::cout << i << "\ttime taken: " << time.at(i) << '\n';
+		avg += time[i];
+		if (min > time[i]) min = time[i];
+		if (max < time[i]) max = time[i];
+	}
+	avg /= times;
+
+	if (!isForCopy) {
+		std::cout << "------TIME------"
+			<< "\nAVG: " << avg
+			<< "\nMIN: " << min
+			<< "\nMAX: " << max << std::endl;
+	}
+	else {
+		std::cout << avg << std::endl;
+	}
+
+	delete[] A;
+	delete[] Y;
+	delete[] X;
+	delete[] time;
+}
+
+void test_LU_par_solve(int n, int times, bool isForCopy) {
+	if (!isForCopy) {
+		std::cout << "\nLU-decomposition (1ARR) parallel of matrix  " << n << " * " << n
+			<< "\nRun " << times << " times." << std::endl;
+	}
+
+	double* A = new double[n * n];
+	double* Y = new double[n];
+	double* X = new double[n];
+	double* time = new double[times];
+
+
+	for (int i = 0; i < times; i++) {
+		generateSystemOfLinearEquations(A, Y, n);
+		/*init(L, n*n);
+		init(U, n*n);
+		init(Y, n*n);
+		init(X, n*n);*/
+
+		Timer t1;
+		LU_Decomposition_par(A, n);
+		LU_Solve(A, Y, X, n);
+		time[i] = t1.elapsed();
+	}
+
+	double avg = 0.0;
+	double min = time[0];
+	double max = time[0];
+
+	for (int i = 0; i < times; i++) {
+		//std::cout << i << "\ttime taken: " << time.at(i) << '\n';
+		avg += time[i];
+		if (min > time[i]) min = time[i];
+		if (max < time[i]) max = time[i];
+	}
+	avg /= times;
+
+	if (!isForCopy) {
+		std::cout << "------TIME------"
+			<< "\nAVG: " << avg
+			<< "\nMIN: " << min
+			<< "\nMAX: " << max << std::endl;
+	}
+	else {
+		std::cout << avg << std::endl;
+	}
+
+	delete[] A;
+	delete[] Y;
+	delete[] X;
+	delete[] time;
+}
+
 int main() {
 	// isAuto true  => coeffs and y - generated,
 	// isAuto false => coeffs and y - enter manually.
 	// const bool isAuto = true;
 
+	// isForCopy true => print in console each avg time only
+	// isForCopy false => print size of matrices, min/max/avg times
+	const bool isForCopy = true;
+
 	//const int n = 100;
 	const int times = 5;
-	const bool isForCopy = true;
 
 	//testGaussDef(isAuto);
 	//testGaussDiscrepancy();
@@ -556,6 +634,18 @@ int main() {
 	test_LU_solve(5000, times, isForCopy);
 	test_LU_solve(6000, times, isForCopy);
 	test_LU_solve(7000, times, isForCopy);*/
+
+	/*test_LU_par_solve(100, times, isForCopy);
+	test_LU_par_solve(200, times, isForCopy);
+	test_LU_par_solve(500, times, isForCopy);
+	test_LU_par_solve(1000, times, isForCopy);
+	test_LU_par_solve(1500, times, isForCopy);
+	test_LU_par_solve(2000, times, isForCopy);
+	test_LU_par_solve(3000, times, isForCopy);
+	test_LU_par_solve(4000, times, isForCopy);
+	test_LU_par_solve(5000, times, isForCopy);
+	test_LU_par_solve(6000, times, isForCopy);
+	test_LU_par_solve(7000, times, isForCopy);*/
 
 	int zzz;
 	std::cin >> zzz;
