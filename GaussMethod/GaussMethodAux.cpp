@@ -2,6 +2,8 @@
 #include <iostream>
 #include <iomanip>
 
+#include "GaussMethodAux.h"
+
 void swap(double& a, double& b) {
 	double tmp = a;
 	a = b;
